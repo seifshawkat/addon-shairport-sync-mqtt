@@ -1,5 +1,5 @@
-ARG BUILD_FROM=hassioaddons/base:8.0.1
-FROM ${BUILD_FROM}
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 
@@ -19,7 +19,9 @@ RUN apk -U add \
         soxr-dev \
         avahi-dev \
         libconfig-dev \
- && cd /root \
+        libsndfile-dev \
+        mosquitto-dev
+RUN cd /root \
  && git clone https://github.com/mikebrady/shairport-sync.git \
  && cd shairport-sync \
  && autoreconf -i -f \
@@ -30,6 +32,10 @@ RUN apk -U add \
         --with-ssl=openssl \
         --with-soxr \
         --with-metadata \
+        --with-mqtt-client \
+        --with-convolution \
+        --sysconfdir=/config \
+       #  --with-apple-alac \
  && make \
  && make install \
  && cd / \
@@ -56,6 +62,7 @@ RUN apk -U add \
         soxr \
         avahi \
         libconfig \
+        mosquitto \
  && rm -rf \
         /etc/ssl \
         /var/cache/apk/* \
